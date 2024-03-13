@@ -1,24 +1,18 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import { bootstrapCameraKit } from '@snap/camera-kit';
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+(async function () {
+  const cameraKit = await bootstrapCameraKit({ apiToken: 'eyJhbGciOiJIUzI1NiIsImtpZCI6IkNhbnZhc1MyU0hNQUNQcm9kIiwidHlwIjoiSldUIn0.eyJhdWQiOiJjYW52YXMtY2FudmFzYXBpIiwiaXNzIjoiY2FudmFzLXMyc3Rva2VuIiwibmJmIjoxNzEwMjg2MjY3LCJzdWIiOiJlNjBlNTI3NS1iNDg4LTRiZDAtYjMxNy04OGVlNDM4M2E5Y2R-U1RBR0lOR342YjRmYTg5OC1hNDMwLTRhNjEtYWJlNS01MzAwZmUxMzU1ZGQifQ.tUq8rklkCWJ_qAvLLF1o7xEKYkHFk34T5pQtm3zTJWs' });
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+  const LiveRenderTarget = document.getElementById('canvas') as HTMLCanvasElement;
+
+  const session = await cameraKit.createSession({ LiveRenderTarget });
+  
+  const mediaStream = await navigator.mediaDevices.getUserMedia({
+    video: true,
+  });
+
+  await session.setSource(mediaStream);
+  
+  await session.play();
+
+})();
